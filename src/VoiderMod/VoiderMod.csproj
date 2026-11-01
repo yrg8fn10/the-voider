@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <AssemblyName>VoiderMod</AssemblyName>
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+  <!-- TODO Phase 1: reference the Subnautica + VehicleFramework assemblies and wire the mod loader -->
+</Project>

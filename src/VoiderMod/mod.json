@@ -1,0 +1,11 @@
+{
+  "Id": "Voider",
+  "DisplayName": "The Voider",
+  "Author": "yrg8fn10",
+  "Version": "0.1.0",
+  "AssemblyName": "VoiderMod.dll",
+  "Dependencies": [
+    { "Id": "VehicleFramework", "Version": "*" }
+  ],
+  "Enable": true
+}
