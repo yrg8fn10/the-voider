@@ -21,8 +21,11 @@ Design pillars:
 | Class | Razor-class Precursor deep submersible |
 | Built by | The Precursors |
 | Unlock | Scan the Voider fragments inside the Precursor bases (Sanctuary, Disease Research Facility, Primary Containment Facility) |
+| Fabrication | Mobile Vehicle Bay (like the Cyclops) |
 
 Mod lore: when the Kharaa outbreak forced the Precursors into their last work, they built the Voider as a warship to defend their research sites against leviathan-class fauna. It outlived its builders, and its blueprint still sleeps in their bases, waiting for someone who can read it.
+
+**How you get it:** dive into the Precursor bases, scan the Voider fragments to unlock the blueprint, then fabricate it at the **Mobile Vehicle Bay**, the same open-water way the Cyclops is built. The Voider is the only thing in the game big enough to share that rite of passage, which is exactly right for a gargantuan sub. The recipe leans on Precursor-grade materials: ion power cells, plasteel ingots, and a kyanite-laced component that only makes sense if the blueprint came from the deep bases (final numbers locked in Phase 1).
 
 ## 3. Specifications
 
