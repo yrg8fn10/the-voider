@@ -87,4 +87,4 @@ Honest note: procedural geometry in code is real, but heavy. If it proves too sl
 
 ## 8. Install (target)
 
-Requires Subnautica 1 with a mod loader (QModManager or BepInEx, decided in Phase 1) plus VehicleFramework, then drop `VoiderMod` into the mods folder. These notes are finalized in Phase 1 alongside the loader choice.
+Requires Subnautica 1 (current version) with **BepInEx + Nautilus** (the modern standard; QModManager is retired, its last release archived for the Legacy branch only) plus **VehicleFramework**. Once built, the compiled plugin drops into `BepInEx/plugins`. Phase 1 finalizes the exact version pins.

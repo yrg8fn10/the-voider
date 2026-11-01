@@ -17,6 +17,7 @@ A first **blockout mesh v1** of the hull exists: [models/voider_blockout_v1.obj]
 |---|---|
 | Game | Subnautica 1 |
 | Framework | [VehicleFramework](https://github.com/PrimeSonic/VehicleFramework) (custom vehicles) |
+| Mod loader | BepInEx + Nautilus (the modern standard; QModManager is retired) |
 | Hull | Procedural, generated in code |
 | Interior | In-game Precursor tech assets |
 

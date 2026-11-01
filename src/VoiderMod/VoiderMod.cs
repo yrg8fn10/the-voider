@@ -1,6 +1,7 @@
 // The Voider - mod entry point (scaffold).
-// TODO Phase 1: align with the VehicleFramework API and the chosen mod loader
-// (QModManager or BepInEx). VehicleFramework: https://github.com/PrimeSonic/VehicleFramework
+// TODO Phase 1: align with the VehicleFramework API on the modern modding stack
+// (BepInEx + Nautilus; QModManager is retired). VehicleFramework: https://github.com/PrimeSonic/VehicleFramework
+// The BepInPlugin attribute and plugin entry point land in Phase 1.
 using System;
 
 namespace VoiderMod
