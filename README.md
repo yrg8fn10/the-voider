@@ -11,6 +11,8 @@ The Voider is a razor-type combat submarine built by the Precursors. It is garga
 ## Status
 Design + code scaffold. Very early, work in progress.
 
+A first **blockout mesh v1** of the hull exists: [models/voider_blockout_v1.obj](models/voider_blockout_v1.obj), generated entirely in code (no modeling software), with a [preview render](models/preview_v1.png). It carries the layout from the concept art: blade-wrapped hull, greenhouse dome, bridge glass at the bow.
+
 | | |
 |---|---|
 | Game | Subnautica 1 |
