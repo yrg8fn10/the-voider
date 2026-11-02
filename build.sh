@@ -1,8 +1,14 @@
 #!/usr/bin/env bash
 # The Voider build for SteamOS / Bazzite / any Linux
+# If this was started with plain "sh", restart it under bash (the script uses bash features).
+if [ -z "$BASH_VERSION" ]; then
+    exec bash "$0" "$@"
+fi
 set -u
 cd "$(dirname "$0")"
+
 echo "=== THE VOIDER BUILD ==="
+echo "Starting the Voider build. Nothing is being sent anywhere; this runs on your Deck only."
 echo
 
 # 1) .NET SDK (the compiler)
