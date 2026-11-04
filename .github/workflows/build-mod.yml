@@ -1,0 +1,42 @@
+name: Build VoiderMod
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Build VehicleFramework (pinned commit)
+        run: |
+          git clone --quiet https://github.com/NeisesMike/VehicleFramework.git ../VehicleFramework-src
+          git -C ../VehicleFramework-src checkout --quiet f4d5c58041fbbdd1e507d48b19607e8acb7b0e1d
+          cat > ../VehicleFramework-src/NuGet.config <<'XML'
+          <?xml version="1.0" encoding="utf-8"?>
+          <configuration>
+            <packageSources>
+              <clear />
+              <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
+              <add key="bepinex.dev" value="https://nuget.bepinex.dev/v3/index.json" />
+            </packageSources>
+          </configuration>
+          XML
+          dotnet build ../VehicleFramework-src/VehicleFramework/VehicleFramework/VehicleFramework.csproj -c Release --nologo
+          mkdir -p libs
+          cp ../VehicleFramework-src/VehicleFramework/VehicleFramework/bin/Release/net472/VehicleFramework.dll libs/
+
+      - name: Build VoiderMod
+        run: dotnet build src/VoiderMod/VoiderMod.csproj -c Release --nologo
+
+      - name: Upload the built mod
+        uses: actions/upload-artifact@v4
+        with:
+          name: VoiderMod
+          path: src/VoiderMod/bin/Release/net472/VoiderMod.dll
