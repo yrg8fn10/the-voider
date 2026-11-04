@@ -1,3 +1,5 @@
+**Status:** early playable blockout is OUT. The sub is real, buildable and spawnable in game (see the v0.1.1-alpha release and INSTALL.md). The five-deck interior and blade damage system come next.
+
 # The Voider
 
 > A gargantuan Precursor razor-class submarine for **Subnautica** (the original game).
