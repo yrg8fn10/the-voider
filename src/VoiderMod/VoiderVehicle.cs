@@ -30,6 +30,48 @@ namespace VoiderMod
         }
         public override List<VehicleHatchStruct> Hatches => _hatches ?? (_hatches = BuildHatches());
 
+        // --- MVB menu icon: drawn in code at runtime, so the Mobile Vehicle
+        // Bay entry always shows the Voider's own mark (a cyan faceted prow
+        // with the razor slit and a bridge pod), never a question mark ---
+        private Sprite _craftingSprite;
+        public override Sprite CraftingSprite
+        {
+            get { return _craftingSprite ?? (_craftingSprite = BuildCraftingSprite()); }
+        }
+
+        private static Sprite BuildCraftingSprite()
+        {
+            const int size = 128;
+            Color32 bg = new Color32(8, 12, 20, 255);
+            Color32 cyan = new Color32(0, 224, 255, 255);
+            Color32 dark = new Color32(3, 60, 76, 255);
+            Color32 white = new Color32(235, 250, 255, 255);
+            Texture2D tex = new Texture2D(size, size, TextureFormat.RGBA32, false);
+            Color32[] px = new Color32[size * size];
+            for (int y = 0; y < size; y++)
+            {
+                for (int x = 0; x < size; x++)
+                {
+                    float cx = x - (size - 1) * 0.5f;
+                    float cy = y - (size - 1) * 0.5f;
+                    Color32 c = new Color32(0, 0, 0, 0);
+                    if (Mathf.Sqrt(cx * cx + cy * cy) <= 60f) { c = bg; }
+                    float d = Mathf.Abs(cx) / 36f + Mathf.Abs(cy) / 26f;
+                    if (d <= 1f)
+                    {
+                        c = cyan;
+                        if (Mathf.Abs(cy) < 5f && cx > -14f && cx < 30f) { c = dark; }
+                    }
+                    float pod = Mathf.Sqrt((cx + 16f) * (cx + 16f) + cy * cy);
+                    if (pod <= 9f) { c = white; }
+                    px[y * size + x] = c;
+                }
+            }
+            tex.SetPixels32(px);
+            tex.Apply(false, true);
+            return Sprite.Create(tex, new Rect(0f, 0f, size, size), new Vector2(0.5f, 0.5f), 100f);
+        }
+
         // --- identity and balance ---
         public override string Description => "A gargantuan Precursor razor-class submarine. Its hull blades cut leviathan-class creatures in a single pass.";
         public override string EncyclopediaEntry =>

@@ -12,12 +12,17 @@ namespace VoiderMod
     public class VoiderPlugin : BaseUnityPlugin
     {
         public const string PluginGuid = "com.osagonresearch.thevoider";
-        public const string PluginVersion = "0.1.2";
+        public const string PluginVersion = "0.1.3";
 
         private void Awake()
         {
             GameObject vehicleRoot = new GameObject("Voider");
             vehicleRoot.AddComponent<VoiderVehicle>();
+            // The plugin loads in the main-menu scene, so the sub's blueprint
+            // object would be destroyed the moment a save loads, leaving the
+            // MVB entry pointing at nothing. Keep the blueprint alive across
+            // scene changes; VF instantiates fresh copies from it when crafted.
+            UnityEngine.Object.DontDestroyOnLoad(vehicleRoot);
             VehicleRegistrar.RegisterVehicleLater(vehicleRoot.GetComponent<VoiderVehicle>(), verbose: true);
             GameObject dockConsole = new GameObject("VoiderDockConsole");
             dockConsole.AddComponent<VoiderDockConsole>();
