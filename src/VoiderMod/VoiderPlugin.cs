@@ -12,7 +12,7 @@ namespace VoiderMod
     public class VoiderPlugin : BaseUnityPlugin
     {
         public const string PluginGuid = "com.osagonresearch.thevoider";
-        public const string PluginVersion = "0.1.1";
+        public const string PluginVersion = "0.1.2";
 
         private void Awake()
         {
@@ -22,6 +22,7 @@ namespace VoiderMod
             GameObject dockConsole = new GameObject("VoiderDockConsole");
             dockConsole.AddComponent<VoiderDockConsole>();
             DontDestroyOnLoad(dockConsole);
+            VoiderDockBuildable.Register();
             Logger.LogInfo("[Voider] plugin loaded, registering the sub with VehicleFramework.");
         }
     }
