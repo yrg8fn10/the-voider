@@ -19,6 +19,9 @@ namespace VoiderMod
             GameObject vehicleRoot = new GameObject("Voider");
             vehicleRoot.AddComponent<VoiderVehicle>();
             VehicleRegistrar.RegisterVehicleLater(vehicleRoot.GetComponent<VoiderVehicle>(), verbose: true);
+            GameObject dockConsole = new GameObject("VoiderDockConsole");
+            dockConsole.AddComponent<VoiderDockConsole>();
+            DontDestroyOnLoad(dockConsole);
             Logger.LogInfo("[Voider] plugin loaded, registering the sub with VehicleFramework.");
         }
     }
