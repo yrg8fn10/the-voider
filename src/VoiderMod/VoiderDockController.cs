@@ -77,10 +77,24 @@ namespace VoiderMod
             TryEngage(other);
         }
 
+        // walk up the hierarchy by hand: the pod's colliders sit on child
+        // objects and the stub API here does not carry GetComponentInParents
+        private static ModVehicle FindVehicle(Collider other)
+        {
+            Transform t = other.transform;
+            while (t != null)
+            {
+                ModVehicle mv = t.GetComponent<ModVehicle>();
+                if (mv != null) return mv;
+                t = t.parent;
+            }
+            return null;
+        }
+
         private void TryEngage(Collider other)
         {
             if (_state != DockState.Idle) return;
-            ModVehicle vehicle = other.GetComponentInParents<ModVehicle>();
+            ModVehicle vehicle = FindVehicle(other);
             if (vehicle == null || !(vehicle is VoiderPod)) return;
 
             Rigidbody body = vehicle.GetComponent<Rigidbody>();
