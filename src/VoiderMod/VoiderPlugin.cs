@@ -12,7 +12,7 @@ namespace VoiderMod
     public class VoiderPlugin : BaseUnityPlugin
     {
         public const string PluginGuid = "com.osagonresearch.thevoider";
-        public const string PluginVersion = "0.1.3";
+        public const string PluginVersion = "0.1.4";
 
         private void Awake()
         {
@@ -24,11 +24,18 @@ namespace VoiderMod
             // scene changes; VF instantiates fresh copies from it when crafted.
             UnityEngine.Object.DontDestroyOnLoad(vehicleRoot);
             VehicleRegistrar.RegisterVehicleLater(vehicleRoot.GetComponent<VoiderVehicle>(), verbose: true);
+            GameObject podRoot = new GameObject("VoiderPod");
+            podRoot.AddComponent<VoiderPod>();
+            // same rule as the sub: keep the pod's blueprint alive across scene
+            // changes so VF can instantiate fresh copies when it is crafted
+            UnityEngine.Object.DontDestroyOnLoad(podRoot);
+            VoiderPod.BlueprintRoot = podRoot;
+            VehicleRegistrar.RegisterVehicleLater(podRoot.GetComponent<VoiderPod>(), verbose: true);
             GameObject dockConsole = new GameObject("VoiderDockConsole");
             dockConsole.AddComponent<VoiderDockConsole>();
             DontDestroyOnLoad(dockConsole);
             VoiderDockBuildable.Register();
-            Logger.LogInfo("[Voider] plugin loaded, registering the sub with VehicleFramework.");
+            Logger.LogInfo("[Voider] plugin loaded, registering the sub and the cockpit pod with VehicleFramework.");
         }
     }
 }

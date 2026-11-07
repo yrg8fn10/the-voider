@@ -11,9 +11,11 @@ namespace VoiderMod
     // chamber drains once the cockpit pod is docked).
     //
     // Phase 1 = the structure itself, spawnable with the console command
-    // "spawndock" for placement testing. Phase 2 = the pod detach / dock /
-    // drain logic and the interior. No custom 3D models, ever: everything is
-    // Unity primitives generated here.
+    // "spawndock" for placement testing. Phase 2 = the chamber interior and
+    // the full dock sequence (VoiderDockController): a pod that swims into
+    // the ring gets captured, walked nose-first through the tube, sealed in,
+    // and the chamber drains around it. "undockpod" releases it. No custom
+    // 3D models, ever: everything is Unity primitives generated here.
     public static class VoiderDockBuilder
     {
         private static Material MakeMaterial(Color color)
@@ -114,6 +116,44 @@ namespace VoiderMod
             AddPrimitive(root.transform, PrimitiveType.Cube, "HatchAccent",
                 new Vector3(0f, 2.9f, -9.1f), new Vector3(2.4f, 0.3f, 0.12f), Quaternion.identity, accentMat);
 
+            // --- Phase 2: chamber interior, drawn in code ---
+            // floor grating: 7 steel slats across the chamber floor
+            for (int i = 0; i < 7; i++)
+            {
+                AddPrimitive(root.transform, PrimitiveType.Cube, "Grating" + i,
+                    new Vector3(-2.7f + i * 0.9f, -3.35f, -11.4f), new Vector3(0.55f, 0.1f, 3.4f), Quaternion.identity, steelMat);
+            }
+            // three ceiling lights the controller swaps from cyan to warm on drain
+            AddPrimitive(root.transform, PrimitiveType.Cube, "ChamberLight0",
+                new Vector3(-2.2f, 3.2f, -11.4f), new Vector3(1.6f, 0.12f, 0.4f), Quaternion.identity, accentMat);
+            AddPrimitive(root.transform, PrimitiveType.Cube, "ChamberLight1",
+                new Vector3(0f, 3.2f, -11.4f), new Vector3(1.6f, 0.12f, 0.4f), Quaternion.identity, accentMat);
+            AddPrimitive(root.transform, PrimitiveType.Cube, "ChamberLight2",
+                new Vector3(2.2f, 3.2f, -11.4f), new Vector3(1.6f, 0.12f, 0.4f), Quaternion.identity, accentMat);
+            // control console on the chamber's back wall, with a cyan screen
+            AddPrimitive(root.transform, PrimitiveType.Cube, "ChamberConsole",
+                new Vector3(0f, -1.2f, -13.0f), new Vector3(3.4f, 1.0f, 0.7f), Quaternion.identity, steelMat);
+            AddPrimitive(root.transform, PrimitiveType.Cube, "ChamberScreen",
+                new Vector3(0f, -0.9f, -12.6f), new Vector3(2.6f, 0.9f, 0.08f), Quaternion.identity, accentMat);
+            // a small storage crate in the corner
+            AddPrimitive(root.transform, PrimitiveType.Cube, "ChamberCrate",
+                new Vector3(-2.6f, -3.0f, -12.6f), new Vector3(1.2f, 0.8f, 1.2f), Quaternion.Euler(0f, 12f, 0f), hullMat);
+            // the water plane that fills the chamber until the pod docks
+            AddPrimitive(root.transform, PrimitiveType.Cube, "ChamberWater",
+                new Vector3(0f, 1.6f, -11.4f), new Vector3(6.6f, 0.06f, 3.4f), Quaternion.identity, MakeMaterial(new Color(0.05f, 0.25f, 0.45f)));
+            // the dock status light above the ring: red empty, green occupied
+            AddPrimitive(root.transform, PrimitiveType.Cube, "DockStatusLight",
+                new Vector3(0f, 6.1f, 0.9f), new Vector3(0.8f, 0.3f, 0.3f), Quaternion.identity, warnMat);
+            // the air volume the controller arms on drain
+            GameObject chamberAir = new GameObject("ChamberAir");
+            chamberAir.transform.SetParent(root.transform, false);
+            chamberAir.transform.localPosition = new Vector3(0f, 0f, -11.4f);
+            BoxCollider airBox = chamberAir.AddComponent<BoxCollider>();
+            airBox.isTrigger = true;
+            airBox.size = new Vector3(6.4f, 6.4f, 3.4f);
+            // the dock controller runs the whole capture / seal / drain sequence
+            root.AddComponent<VoiderDockController>();
+
             // --- Phase 2 anchors: where the pod aligns, and the chamber center ---
             GameObject anchor = new GameObject("DockAnchor");
             anchor.transform.SetParent(root.transform, false);
@@ -131,12 +171,15 @@ namespace VoiderMod
     public class VoiderDockConsole : MonoBehaviour
     {
         private static GameObject _currentDock;
+        private static VoiderDockController _currentController;
 
         public IEnumerator Start()
         {
             // the game's console exists only once a save is loaded
             yield return new WaitUntil(() => DevConsole.instance != null);
             DevConsole.RegisterConsoleCommand("spawndock", OnConsoleCommand_spawndock, false, false);
+            DevConsole.RegisterConsoleCommand("spawnpod", OnConsoleCommand_spawnpod, false, false);
+            DevConsole.RegisterConsoleCommand("undockpod", OnConsoleCommand_undockpod, false, false);
         }
 
         public void OnConsoleCommand_spawndock(NotificationCenter.Notification _)
@@ -152,6 +195,30 @@ namespace VoiderMod
             Vector3 look = player.position;
             look.y = pos.y;
             _currentDock.transform.LookAt(look);
+            _currentController = _currentDock.GetComponent<VoiderDockController>();
+        }
+
+        // "spawnpod" drops the cockpit pod 12 m ahead of the player for testing.
+        // Swim it into a dock ring and slow down; the dock takes it from there.
+        public void OnConsoleCommand_spawnpod(NotificationCenter.Notification _)
+        {
+            if (VoiderPod.BlueprintRoot == null || Player.main == null) return;
+
+            Transform player = Player.main.transform;
+            Vector3 pos = player.position + player.forward * 12f;
+            pos.y -= 1f;
+
+            GameObject pod = Object.Instantiate(VoiderPod.BlueprintRoot);
+            pod.transform.position = pos;
+            pod.transform.rotation = Quaternion.LookRotation(player.forward, Vector3.up);
+        }
+
+        // "undockpod" runs the dock's release sequence: air off, door open,
+        // clamps out, and the pod is pushed back out through the ring.
+        public void OnConsoleCommand_undockpod(NotificationCenter.Notification _)
+        {
+            if (_currentController == null) return;
+            _currentController.StartUndock();
         }
     }
 }

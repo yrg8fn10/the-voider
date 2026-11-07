@@ -1,4 +1,4 @@
-**Status:** early playable blockout is OUT. The sub is real, buildable and spawnable in game (see the v0.1.1-alpha release and INSTALL.md). The five-deck interior and blade damage system come next.
+**Status:** early playable blockout is OUT. The sub is real, buildable and spawnable in game (see INSTALL.md), the base dock is a Habitat Builder piece, and v0.1.4 adds the dock sequence: the cockpit pod swims into the ring, gets clamped in, and the chamber drains around it. The five-deck interior and blade damage system come next.
 
 # The Voider
 
